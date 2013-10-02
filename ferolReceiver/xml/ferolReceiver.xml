@@ -50,7 +50,7 @@
         <properties xmlns="urn:xdaq=application:ferolReceiver::FEROLReceiver" xsi:type="soapenc:Struct">
         </properties>
     </xc:Application>
-    <xc:Module>~zmao/ferol/ferolReceiver/lib/linux/x86_64_slc6/libferolReceiver.so</xc:Module> 
+    <xc:Module>${PWD}/lib/linux/x86_64_slc6/libferolReceiver.so</xc:Module>
     
     <!-- i2o target -->
     

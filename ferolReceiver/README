@@ -1,0 +1,15 @@
+ssh cms904usr
+git config --global http.sslVerify false
+
+git clone https://github.com/zaixingmao/FEROLReceiver.git
+mv FEROLReceiver ferol
+
+ssh hcal904daq02
+cd ferol/ferolReceiver/
+
+export XDAQ_ROOT=/opt/xdaq
+export XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/xdaq/lib
+
+#To run FEROLReceiver
+/opt/xdaq/bin/xdaq.exe -p 54321 -c ${PWD}/xml/ferolReceiver.xml

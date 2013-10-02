@@ -1,0 +1,4 @@
+ferolReceiver/lib
+*.d
+*.o
+*~
