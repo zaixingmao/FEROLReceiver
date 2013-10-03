@@ -9,7 +9,7 @@
  * For the licensing terms see LICENSE.		                         *
  * For the list of contributors see CREDITS.   			         *
  *************************************************************************/
-
+#include <fstream>
 #include "ferolReceiver/FEROLReceiver.h"
 #include "interface/shared/i2ogevb2g.h"
 #include "i2o/Method.h"
@@ -33,9 +33,17 @@ void ferolReceiver::FEROLReceiver::rawDataAvailable (toolbox::mem::Reference* re
 {
   PI2O_DATA_READY_MESSAGE_FRAME frame = (PI2O_DATA_READY_MESSAGE_FRAME) ref->getDataLocation();
   std::cout<<"fedid: "<<frame->fedid<<"    triggNumber:"<<frame->triggerno<<std::endl;
-
-
+  std::cout<<"Buff Size:" <<ref->getBuffer()->getSize()<<std::endl;
+  std::cout<<"total length: "<<frame->totalLength<<std::endl;
+  std::cout<<"Ref Data Size: "<<ref->getDataSize()<<std::endl;
+  unsigned char* Data = (unsigned char*) ref->getBuffer()->getAddress() + sizeof(I2O_DATA_READY_MESSAGE_FRAME);
+  int DataSize = frame->totalLength;
   
+  std::ofstream ofs;
+  ofs.open("/nfshome0/zmao/data.txt", std::ofstream::out);
+  ofs.write((char*)Data, DataSize);
+  ofs.close();
+
 
 
   cache->grantFrame(ref);
