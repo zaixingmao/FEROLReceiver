@@ -16,3 +16,8 @@ make
 
 #To run FEROLReceiver
 /opt/xdaq/bin/xdaq.exe -p 54321 -c ${PWD}/xml/ferolReceiver.xml
+
+
+#Settings in .xml file
+PreScale: Data will be saved every 'PreScale' events
+OutputFileName: Defined by user. Warning will be given if output file could be written.
