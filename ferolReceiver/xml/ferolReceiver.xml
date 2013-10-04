@@ -48,7 +48,7 @@
     
     <xc:Application class="ferolReceiver::FEROLReceiver" id="43" instance="0" network="ferolnet" >
         <properties xmlns="urn:xdaq=application:ferolReceiver::FEROLReceiver" xsi:type="soapenc:Struct">
-            <OutputFileName xsi:type="xsd:string">/nfshome0/zmao/data3.txt</OutputFileName>
+            <OutputFileName xsi:type="xsd:string">/tmp/data.dat</OutputFileName>
             <PreScale xsi:type="xsd:unsignedInt">5</PreScale>
         </properties>
     </xc:Application>
