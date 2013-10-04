@@ -17,12 +17,15 @@
 #include "toolbox/BSem.h"
 #include "xdaq/Application.h"
 #include "xdata/Event.h"
+#include "xdata/String.h"
+#include "xdata/Integer.h"
 #include "xdata/ActionListener.h"
 #include "i2o/Method.h"
 #include "tcpla/MemoryCache.h"
+#include <fstream>
 
 namespace ferolReceiver {
-class FEROLReceiver: public xdaq::Application
+class FEROLReceiver: public xdaq::Application, xdata::ActionListener
 {	
 	public:
 		XDAQ_INSTANTIATOR();
@@ -31,12 +34,19 @@ class FEROLReceiver: public xdaq::Application
 		
 		// Interface function invoked for the I2O token message
 		// that is received from the FEROL
+        // I2O Super fragment
         void dataFragmentCallback(toolbox::mem::Reference * ref)  throw  (i2o::exception::Exception);
-	void rawDataAvailable (toolbox::mem::Reference* ref, int originator, tcpla::MemoryCache* cache);
+	    // I2O Data
+        void rawDataAvailable (toolbox::mem::Reference* ref, int originator, tcpla::MemoryCache* cache);
+        //Pick up parameters from xml file
+        void actionPerformed(xdata::Event& e); 
 
 	protected:
 	
 		toolbox::BSem mutex_;
+        std::ofstream ofs;
+        xdata::String OutputFileName_;
+        xdata::UnsignedInteger PreScale_;
 };
 }
 #endif
