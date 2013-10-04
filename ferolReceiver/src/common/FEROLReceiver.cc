@@ -16,50 +16,55 @@
 #include "i2o/i2o.h"
 #include "pt/frl/Method.h"
 
+
 XDAQ_INSTANTIATOR_IMPL(ferolReceiver::FEROLReceiver)
 
 ferolReceiver::FEROLReceiver::FEROLReceiver(xdaq::ApplicationStub* c)
 	throw(xdaq::exception::Exception)
 	: xdaq::Application(c), mutex_(toolbox::BSem::FULL)
 {
-  //I2O Super fragment
-  i2o::bind(this,&ferolReceiver::FEROLReceiver::dataFragmentCallback,I2O_SUPER_FRAGMENT_READY,XDAQ_ORGANIZATION_ID);
+    //Application Properties
+    PreScale_ = 1; 
+    this->getApplicationInfoSpace()->fireItemAvailable("OutputFileName", &OutputFileName_);
+    this->getApplicationInfoSpace()->fireItemAvailable("PreScale", &PreScale_);
+
+    //Pick up parameters from xml file
+    this->getApplicationInfoSpace()->addListener(this, "urn:xdaq-event:setDefaultValues");
+
+    //I2O Super fragment
+    i2o::bind(this, &ferolReceiver::FEROLReceiver::dataFragmentCallback,I2O_SUPER_FRAGMENT_READY,XDAQ_ORGANIZATION_ID);
   
-  //I2O Data
-  pt::frl::bind(this, &ferolReceiver::FEROLReceiver::rawDataAvailable);
+    //I2O Data
+    pt::frl::bind(this, &ferolReceiver::FEROLReceiver::rawDataAvailable);
 }
-		
+
+void ferolReceiver::FEROLReceiver::actionPerformed(xdata::Event& e)
+{
+    if (e.type() == "urn:xdaq-event:setDefaultValues"){
+        ofs.open(OutputFileName_.value_.c_str(), std::ofstream::out);
+        std::ifstream oFileExist(OutputFileName_.value_.c_str());
+        if(!oFileExist)  LOG4CPLUS_WARN(this->getApplicationLogger(),"Output file '"<<OutputFileName_.value_.c_str()<<"' doesn't exist, data will not be saved!!");
+        oFileExist.close();
+    }
+}
+
 void ferolReceiver::FEROLReceiver::rawDataAvailable (toolbox::mem::Reference* ref, int originator, tcpla::MemoryCache* cache)
 {
 
-  PI2O_DATA_READY_MESSAGE_FRAME frame = (PI2O_DATA_READY_MESSAGE_FRAME) ref->getDataLocation();
+    PI2O_DATA_READY_MESSAGE_FRAME frame = (PI2O_DATA_READY_MESSAGE_FRAME) ref->getDataLocation();
 
-  LOG4CPLUS_INFO(this->getApplicationLogger(),"Saving Event: fedid: "<<frame->fedid<<"  triggNumber:"<<frame->triggerno); 
+    if(!(frame->triggerno%PreScale_)){
+        LOG4CPLUS_INFO(this->getApplicationLogger(),"Saving Event: fedid: "<<frame->fedid<<"  triggNumber:"<<frame->triggerno); 
 
-  unsigned char* Data = (unsigned char*) ref->getBuffer()->getAddress() + sizeof(I2O_DATA_READY_MESSAGE_FRAME);
-  int DataSize = frame->totalLength;
-  
-  std::ofstream ofs;
+        unsigned char* Data = (unsigned char*) ref->getBuffer()->getAddress() + sizeof(I2O_DATA_READY_MESSAGE_FRAME);
+        int DataSize = frame->totalLength;
 
-  std::string ofileName = "/nfshome0/zmao/data2.txt";
+        ofs.write((char*)Data, DataSize);
 
-  std::ifstream oFileExist(ofileName.c_str()); //Check if Output file exists
-  if(oFileExist.good()){// If file exist, append
-    oFileExist.close();
-    ofs.open(ofileName.c_str(), std::ios::out | std::ios::app);
-  }
-  else{// If file doesn't exist, create new
-    oFileExist.close();
-    ofs.open(ofileName.c_str(), std::ofstream::out); 
-  }
-  
-  ofs.write((char*)Data, DataSize);
-  ofs.close();
+        LOG4CPLUS_INFO(this->getApplicationLogger(),"Saving Complete");
 
-  LOG4CPLUS_INFO(this->getApplicationLogger(),"Saving Complete");
-
-
-  cache->grantFrame(ref);
+        cache->grantFrame(ref);
+    }
 }
 
 
