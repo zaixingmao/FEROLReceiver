@@ -21,9 +21,9 @@
 	<autoConnect xsi:type="xsd:boolean">false</autoConnect>
 	<!-- Copy worker configuration -->
 	<i2oFragmentBlockSize xsi:type="xsd:unsignedInt">32768</i2oFragmentBlockSize>
-	<i2oFragmentsNo xsi:type="xsd:unsignedInt">16</i2oFragmentsNo>
-	<i2oFragmentPoolSize xsi:type="xsd:unsignedInt">700000</i2oFragmentPoolSize>
-	<copyWorkerQueueSize xsi:type="xsd:unsignedInt">16</copyWorkerQueueSize>
+	<i2oFragmentsNo xsi:type="xsd:unsignedInt">160</i2oFragmentsNo>
+	<i2oFragmentPoolSize xsi:type="xsd:unsignedInt">70000000</i2oFragmentPoolSize>
+	<copyWorkerQueueSize xsi:type="xsd:unsignedInt">160</copyWorkerQueueSize>
 	<copyWorkersNo xsi:type="xsd:unsignedInt">1</copyWorkersNo>
 	<!-- Super fragment configuration -->
 	<doSuperFragment xsi:type="xsd:boolean">false</doSuperFragment>
@@ -34,7 +34,7 @@
 	<dropAtSuperFragmentWorker xsi:type="xsd:boolean">false</dropAtSuperFragmentWorker>
 	<dropAtSuperFragmentDelivery xsi:type="xsd:boolean">false</dropAtSuperFragmentDelivery>
 	<!-- Input configuration e.g. PSP -->
-	<inputStreamPoolSize xsi:type="xsd:double">1400000</inputStreamPoolSize>
+	<inputStreamPoolSize xsi:type="xsd:double">140000000</inputStreamPoolSize>
 	<maxClients xsi:type="xsd:unsignedInt">10</maxClients>
 	<ioQueueSize xsi:type="xsd:unsignedInt">64</ioQueueSize>
 	<eventQueueSize xsi:type="xsd:unsignedInt">64</eventQueueSize>
@@ -48,6 +48,8 @@
     
     <xc:Application class="ferolReceiver::FEROLReceiver" id="43" instance="0" network="ferolnet" >
         <properties xmlns="urn:xdaq=application:ferolReceiver::FEROLReceiver" xsi:type="soapenc:Struct">
+            <OutputFileName xsi:type="xsd:string">/nfshome0/zmao/data3.txt</OutputFileName>
+            <PreScale xsi:type="xsd:unsignedInt">5</PreScale>
         </properties>
     </xc:Application>
     <xc:Module>${PWD}/lib/linux/x86_64_slc6/libferolReceiver.so</xc:Module>
