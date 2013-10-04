@@ -31,19 +31,32 @@ ferolReceiver::FEROLReceiver::FEROLReceiver(xdaq::ApplicationStub* c)
 		
 void ferolReceiver::FEROLReceiver::rawDataAvailable (toolbox::mem::Reference* ref, int originator, tcpla::MemoryCache* cache)
 {
+
   PI2O_DATA_READY_MESSAGE_FRAME frame = (PI2O_DATA_READY_MESSAGE_FRAME) ref->getDataLocation();
-  std::cout<<"fedid: "<<frame->fedid<<"    triggNumber:"<<frame->triggerno<<std::endl;
-  std::cout<<"Buff Size:" <<ref->getBuffer()->getSize()<<std::endl;
-  std::cout<<"total length: "<<frame->totalLength<<std::endl;
-  std::cout<<"Ref Data Size: "<<ref->getDataSize()<<std::endl;
+
+  LOG4CPLUS_INFO(this->getApplicationLogger(),"Saving Event: fedid: "<<frame->fedid<<"  triggNumber:"<<frame->triggerno); 
+
   unsigned char* Data = (unsigned char*) ref->getBuffer()->getAddress() + sizeof(I2O_DATA_READY_MESSAGE_FRAME);
   int DataSize = frame->totalLength;
   
   std::ofstream ofs;
-  ofs.open("/nfshome0/zmao/data.txt", std::ofstream::out);
+
+  std::string ofileName = "/nfshome0/zmao/data2.txt";
+
+  std::ifstream oFileExist(ofileName.c_str()); //Check if Output file exists
+  if(oFileExist.good()){// If file exist, append
+    oFileExist.close();
+    ofs.open(ofileName.c_str(), std::ios::out | std::ios::app);
+  }
+  else{// If file doesn't exist, create new
+    oFileExist.close();
+    ofs.open(ofileName.c_str(), std::ofstream::out); 
+  }
+  
   ofs.write((char*)Data, DataSize);
   ofs.close();
 
+  LOG4CPLUS_INFO(this->getApplicationLogger(),"Saving Complete");
 
 
   cache->grantFrame(ref);
