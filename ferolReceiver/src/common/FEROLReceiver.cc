@@ -63,8 +63,9 @@ void ferolReceiver::FEROLReceiver::rawDataAvailable (toolbox::mem::Reference* re
 
         LOG4CPLUS_INFO(this->getApplicationLogger(),"Saving Complete");
 
-        cache->grantFrame(ref);
     }
+
+    cache->grantFrame(ref); //Release frame
 }
 
 
