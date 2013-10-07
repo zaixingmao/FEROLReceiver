@@ -65,7 +65,7 @@ void ferolReceiver::FEROLReceiver::rawDataAvailable (toolbox::mem::Reference* re
 
     }
 
-    cache->grantFrame(ref); //Release frame
+    cache->grantFrame(ref); //Release reference
 }
 
 
